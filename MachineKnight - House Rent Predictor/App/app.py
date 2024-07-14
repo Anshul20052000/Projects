@@ -44,8 +44,8 @@ values = {'property_size' : [100, 5000], 'property_age' : [0, 400],
           'bathroom' : [1, 7], 'cup_board' : [0, 40], 'floor' : [0, 25], 
           'total_floor' : [0, 26], 'balconies' : [0, 10]}
 
-model = pickle.load(open('Model_high_250_20.sav', 'rb'))
-#model = pickle.load(open('Model_mid.sav', 'rb'))
+#model = pickle.load(open('Model_high_250_20.sav', 'rb'))
+model = pickle.load(open('Model_mid.sav', 'rb'))
 
 for item in inputs.keys():
     st.subheader(inputs[item])

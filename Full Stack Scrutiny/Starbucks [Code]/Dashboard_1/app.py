@@ -27,7 +27,8 @@ selected = option_menu(
         default_index=0,
         orientation="horizontal",
         )
-    
+
+# This block is for Customer Segmentation
 if selected == "Customer Segmentation":
     st.title("Customer Segmentation")
     
@@ -151,7 +152,7 @@ if selected == "Customer Segmentation":
     
     
     
-
+# This block is for Sentiment Analysis
 if selected == "Sentiment Analysis":
     st.title("Sentiment Analysis")
     
@@ -187,7 +188,7 @@ if selected == "Sentiment Analysis":
     
     
     
-    
+# This block is for Behaviour Analysis    
 if selected == "Behaviour Analysis":
     st.title("Behaviour Analysis")
     

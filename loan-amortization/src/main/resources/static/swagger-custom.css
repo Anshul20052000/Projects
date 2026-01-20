@@ -1,0 +1,21 @@
+/* Change header color */
+.swagger-ui .topbar {
+    background-color: #0f172a;
+}
+
+/* Change Swagger title color */
+.swagger-ui .topbar-wrapper span {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Buttons */
+.swagger-ui .btn.execute {
+    background-color: #16a34a;
+}
+
+/* Section headers */
+.swagger-ui .opblock-tag {
+    font-size: 18px;
+    font-weight: 600;
+}

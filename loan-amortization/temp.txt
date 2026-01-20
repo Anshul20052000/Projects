@@ -1,0 +1,216 @@
+Got it — thank you for the correction.
+Let's realign the logic perfectly according to your actual API data.
+
+✅ Your Actual API Inputs
+1️⃣ Account Balance API
+
+Contains:
+
+Current account balance (money you have in the bank)
+
+This is not related to the loan
+
+2️⃣ Transaction History API
+
+Contains:
+
+List of credits
+
+List of debits
+(no direct relationship to the loan, except maybe EMI debit entries)
+
+3️⃣ Loan EMI API
+
+Contains:
+
+Full list of EMI instalments
+→ EMI amount
+→ Principal component
+→ Interest component
+→ Remaining principal
+→ Dates
+→ Tenure info
+→ Base interest rate (if part of JSON)
+
+This is the only API that contains actual loan information.
+
+🎯 Restated Final Goal With This Correction
+
+Using only:
+
+Loan EMI API
+→ to compute tenure, interest saved, updated EMI schedule
+
+Account Balance API
+→ to check if customer has funds to increase EMI
+
+Transaction API
+→ to analyze spending & inflow pattern (does he have room to increase EMI?)
+
+You want to:
+
+✔ Suggest if customer should increase EMI
+✔ Show new schedule if he increases
+✔ Show interest saved & time saved
+✔ Show affordability logic based on income/spend
+⭐ PERFECT ARCHITECTURE (Adjusted)
+/service/api/           (already done)
+   AccountApiService
+   TransactionApiService
+   LoanEmiApiService
+
+/service/loanAdvisor/
+   LoanAdvisorService  ← NEW (business logic)
+   EmiRecalculator     ← NEW (recalculate schedule)
+
+/controller/
+   LoanAdvisorController  ← NEW endpoint for advice
+
+🚀 STEP 1 — Build LoanAdvisorService (Updated)
+
+Here is the corrected version without using account API for loan data.
+
+@Service
+public class LoanAdvisorService {
+
+    public LoanAdviceResponse generateAdvice(
+            AccountBalanceResponse accountBalance,
+            TransactionHistoryResponse txHistory,
+            EmiScheduleResponse emiSchedule,
+            double proposedNewEmi
+    ) {
+
+        LoanAdviceResponse advice = new LoanAdviceResponse();
+
+        // Extract loan data
+        List<EmiRow> emis = emiSchedule.getInstallments();
+        double currentEmi = emiSchedule.getInstallmentAmount();
+        double remainingPrincipal = emis.get(emis.size() - 1).getRemainingPrincipal();
+        double annualInterestRate = emiSchedule.getInterestRate();
+
+        // Calculate interest left in current plan
+        double currentInterestLeft = emis.stream()
+                .mapToDouble(EmiRow::getInterestComponent)
+                .sum();
+
+        // Recalculate schedule with proposed EMI
+        EmiRecalculator calc = new EmiRecalculator(
+                remainingPrincipal,
+                proposedNewEmi,
+                annualInterestRate
+        );
+
+        NewEmiSchedule newSchedule = calc.calculate();
+
+        // Savings
+        double newInterest = newSchedule.getTotalInterest();
+        double interestSaved = currentInterestLeft - newInterest;
+        int timeSaved = emis.size() - newSchedule.getNumberOfMonths();
+
+        // Set response
+        advice.setCurrentEmi(currentEmi);
+        advice.setProposedEmi(proposedNewEmi);
+        advice.setInterestSaved(interestSaved);
+        advice.setMonthsSaved(timeSaved);
+        advice.setNewEmiSchedule(newSchedule);
+
+        // Affordability check using balance + spending
+        advice.setCanAfford(checkAffordability(accountBalance, txHistory, proposedNewEmi));
+
+        return advice;
+    }
+
+    private boolean checkAffordability(
+            AccountBalanceResponse balance,
+            TransactionHistoryResponse txHistory,
+            double proposedNewEmi
+    ) {
+        double avgMonthlyIncome = txHistory.getCreditsLast3Months();
+        double avgMonthlySpending = txHistory.getDebitsLast3Months();
+
+        double disposableIncome = avgMonthlyIncome - avgMonthlySpending;
+
+        return disposableIncome > (proposedNewEmi + 2000);
+    }
+}
+
+🚀 STEP 2 — EMI Recalculator (Uses only loan API data)
+public class EmiRecalculator {
+
+    private final double principal;
+    private final double newEmi;
+    private final double annualRate;
+
+    public EmiRecalculator(double principal, double newEmi, double annualRate) {
+        this.principal = principal;
+        this.newEmi = newEmi;
+        this.annualRate = annualRate;
+    }
+
+    public NewEmiSchedule calculate() {
+
+        double monthlyRate = annualRate / 12 / 100;
+        double remaining = principal;
+        double totalInterest = 0;
+
+        List<NewEmiRow> rows = new ArrayList<>();
+        int month = 1;
+
+        while (remaining > 1) {
+
+            double interest = remaining * monthlyRate;
+            double principalPart = newEmi - interest;
+
+            if (principalPart > remaining) principalPart = remaining;
+
+            remaining -= principalPart;
+            totalInterest += interest;
+
+            rows.add(new NewEmiRow(month++, principalPart, interest, remaining));
+        }
+
+        return new NewEmiSchedule(rows, totalInterest, month - 1);
+    }
+}
+
+🚀 STEP 3 — Advisory Controller
+@RestController
+@RequestMapping("/api/advisor")
+public class LoanAdvisorController {
+
+    @Autowired AccountApiService accountApi;
+    @Autowired TransactionApiService txApi;
+    @Autowired EmiApiService emiApi;
+    @Autowired LoanAdvisorService advisor;
+
+    @GetMapping("/recommendation")
+    public LoanAdviceResponse recommend(
+            @RequestParam String accountRef,
+            @RequestParam String loanRef,
+            @RequestParam double proposedEmi
+    ) {
+
+        var balance = accountApi.getAccountBalance(...).block();
+        var tx = txApi.getTransactionHistory(...).block();
+        var emi = emiApi.getEmiSchedule(...).block();
+
+        return advisor.generateAdvice(balance, tx, emi, proposedEmi);
+    }
+}
+
+🧠 You Now Have:
+✔ Correct architecture
+✔ Pure loan logic taken only from Loan API
+✔ Balance + transaction used only for affordability
+✔ EMI recomputation engine
+✔ Advice engine
+👉 Ready For Next Step?
+
+Choose one:
+
+A. Generate all DTOs (LoanAdviceResponse, NewEmiSchedule, NewEmiRow)
+B. Add swagger annotations to advisor endpoint
+C. Test the full pipeline with sample JSON
+D. Implement “Auto Suggest EMI Amount” feature
+
+Which one do you want next?

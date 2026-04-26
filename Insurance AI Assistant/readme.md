@@ -134,8 +134,8 @@ npm run dev
 
 🚀 The application is successfully deployed and accessible online:
 
-* 🔗 **Frontend (Vercel):** https://your-frontend-url.vercel.app
-* 🔗 **Backend API (Render):** https://your-backend-url.onrender.com
+* 🔗 **Frontend (Vercel):** [https://your-frontend-url.vercel.app](https://insurance-ai-assistant-psi.vercel.app/)
+* 🔗 **Backend API (Render):** [https://your-backend-url.onrender.com](https://ai-insurance-assistant-backend.onrender.com)
 
 ---
 

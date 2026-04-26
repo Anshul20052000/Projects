@@ -130,6 +130,44 @@ npm run dev
 
 ---
 
+## 🌐 Live Demo
+
+🚀 The application is successfully deployed and accessible online:
+
+* 🔗 **Frontend (Vercel):** https://your-frontend-url.vercel.app
+* 🔗 **Backend API (Render):** https://your-backend-url.onrender.com
+
+---
+
+## ⚡ Deployment Details
+
+* 🌍 **Frontend:** Hosted on Vercel for fast, global delivery
+* 🖥️ **Backend:** Deployed on Render with FastAPI
+* 🔐 **Environment Variables:** Managed securely via cloud platforms
+
+---
+
+## 📝 Notes
+
+* ⏳ The backend may take a few seconds to respond on the first request due to cold starts (Render free tier limitation).
+* 📂 Users can upload insurance policy PDFs and start querying immediately.
+
+---
+
+## 🎯 Try It Out
+
+1. Open the frontend link
+2. Upload one or more policy PDFs
+3. Ask questions like:
+
+   * "What is covered in this policy?"
+   * "What are the claim conditions?"
+   * "Is hospitalization included?"
+
+👉 Get instant AI-powered answers based on your documents.
+
+---
+
 ## 🏆 Conclusion
 
 This project demonstrates how modern AI techniques like RAG and LLMs can transform static documents into interactive, intelligent assistants—enhancing user experience and reducing operational effort.

@@ -1,0 +1,26 @@
+# Python virtual environment
+.venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# IDE settings
+.vscode/
+.idea/
+
+# Backend specific ignores
+backend/.env
+backend/uploads/
+backend/vectorstore/
+
+# Frontend specific ignores
+Frontend/node_modules/
+Frontend/dist/
+Frontend/.env
+
+# OS files
+.DS_Store
+Thumbs.db

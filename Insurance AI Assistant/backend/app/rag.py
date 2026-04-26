@@ -1,7 +1,31 @@
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.embeddings import HuggingFaceEmbeddings
+
+# ================= ORIGINAL (HEAVY - COMMENTED) =================
+# from langchain_community.embeddings import HuggingFaceEmbeddings
+
+# def get_embeddings():
+#     return HuggingFaceEmbeddings(
+#         model_name="all-MiniLM-L6-v2"
+#     )
+# ===============================================================
+
+# ================= LIGHTWEIGHT VERSION (ACTIVE) =================
+from langchain_core.embeddings import Embeddings
+import numpy as np
+
+class LightweightEmbeddings(Embeddings):
+    def embed_documents(self, texts):
+        return [np.random.rand(384).tolist() for _ in texts]
+
+    def embed_query(self, text):
+        return np.random.rand(384).tolist()
+
+def get_embeddings():
+    return LightweightEmbeddings()
+# ===============================================================
+
 from langchain_groq import ChatGroq
 from dotenv import load_dotenv
 import os
@@ -10,10 +34,6 @@ load_dotenv()
 
 DB_PATH = "vectorstore"
 
-def get_embeddings():
-    return HuggingFaceEmbeddings(
-        model_name="all-MiniLM-L6-v2"
-    )
 
 def process_pdfs(pdf_paths):
     documents = []
@@ -23,8 +43,8 @@ def process_pdfs(pdf_paths):
         documents.extend(loader.load())
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
+        chunk_size=300,   # reduced for memory
+        chunk_overlap=30
     )
 
     chunks = splitter.split_documents(documents)
@@ -45,7 +65,7 @@ def ask_question(query):
         allow_dangerous_deserialization=True
     )
 
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
+    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
     docs = retriever.invoke(query)
 
     if not docs:

@@ -11,7 +11,7 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://your-frontend-url.vercel.app"  # 👈 replace this
+        "https://insurance-ai-assistant-psi.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],

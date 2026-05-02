@@ -12,6 +12,7 @@ const DEFAULT_SUGGESTIONS = [
   "What is the coverage limit for my policy?",
   "How can I renew my insurance?"
 ];
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Chat({ conversation, conversations, setConversations, uploadedDocuments, setUploadedDocuments }) {
   const { isDark } = useTheme();
@@ -57,7 +58,7 @@ export default function Chat({ conversation, conversations, setConversations, up
     setUploadProgress(0);
 
     try {
-      const response = await axios.post("http://localhost:8000/upload", formData, {
+      const response = await axios.post(`${API_URL}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
@@ -134,7 +135,7 @@ export default function Chat({ conversation, conversations, setConversations, up
     simulateThinking();
 
     try {
-      const res = await axios.post("http://localhost:8000/ask", null, {
+      const res = await axios.post(`${API_URL}/ask`, null, {
         params: { query: text }
       });
 

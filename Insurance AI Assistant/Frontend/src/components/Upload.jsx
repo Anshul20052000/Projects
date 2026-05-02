@@ -5,23 +5,25 @@ export default function Upload() {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleUpload = async (files) => {
     if (!files.length) return;
-
+  
     setIsUploading(true);
     const formData = new FormData();
-
+  
     for (let i = 0; i < files.length; i++) {
       formData.append("files", files[i]);
     }
-
+  
     try {
-      await axios.post("http://localhost:8000/upload", formData, {
+      await axios.post(`${API_URL}/upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
       });
+  
       alert("✅ Documents uploaded and processed successfully!");
     } catch (error) {
       console.error("Upload error:", error);
